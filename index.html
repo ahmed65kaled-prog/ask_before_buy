@@ -31,6 +31,7 @@ async function loadMore(){
 }
 function render(a){document.getElementById('list').innerHTML=a.map(p=>`<div class=card><span class=badge>${p.cat}</span> <span class=badge style="background:#22c55e;color:#000">${p.brand}</span> <span class=badge>${p.code}</span><h3 style="margin:4px 0;font-size:13px">${p.name} - <span class=price>${p.price||'?'}ج</span></h3><div style="font-size:12px">${p.k} سعرة | دهون ${p.f}g | بروتين ${p.pr}g</div><div style="font-size:11px;margin-top:4px">💡 ${p.benefit}</div></div>`).join('')}
 function filterCat(c){render(c=='الكل'?DB:DB.filter(x=>x.cat.includes(c)||c.includes(x.cat)))}
+ 
 function searchProd(q){render(DB.filter(x=>(x.name+x.brand+x.code).includes(q)))}
 render(DB); loadMore();
 </script></body></html>
