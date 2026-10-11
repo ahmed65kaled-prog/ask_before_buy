@@ -1,1 +1,36 @@
 
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>موسوعة مصر 150 منتج</title><style>body{background:#020617;color:#fff;font-family:system-ui;padding:10px}button{padding:10px;border-radius:12px;border:none;font-weight:900;margin:3px;font-size:12px;background:#22c55e}input{width:100%;padding:12px;border-radius:12px;border:none;margin:6px 0;text-align:center}.card{background:#1e293b;border-radius:12px;padding:10px;margin-top:8px;border:1px solid #334155}.price{color:#22c55e;font-weight:900;font-size:20px}.badge{padding:3px 6px;border-radius:6px;font-size:10px;background:#334155;display:inline-block;margin:2px}</style></head><body>
+<h2 style="text-align:center">🇪🇬 موسوعة مصر - 150 منتج 622<br><span style="font-size:10px;opacity:.6">جبن سايب ومعلب + ألبان + عصائر + مشروبات</span></h2>
+<input id="s" placeholder="ابحث: قريش رومي جهينة بيبسي سبيرو..." oninput="searchProd(this.value)">
+<div style="text-align:center"><button onclick="filterCat('الكل')">الكل</button><button onclick="filterCat('جبن')">جبن</button><button onclick="filterCat('ألبان')">ألبان</button><button onclick="filterCat('عصائر')">عصائر</button><button onclick="filterCat('مشروبات')">مشروبات</button></div>
+<div id="count" style="text-align:center;font-size:11px;opacity:.6;margin:6px">⏳ بحمل 150 منتج مصري 622...</div>
+<div id="list"></div>
+<script>
+let DB=[
+{code:"EGY-LOOSE-002",cat:"جبن سايب",name:"قريش فلاحي سايب كيلو",brand:"فلاحي",k:98,f:4,pr:18,price:90,benefit:"دايت 98 سعرة - بروتين 18g"},
+{code:"EGY-LOOSE-001",cat:"جبن سايب",name:"رومي قديمة سايب كيلو",brand:"بلدي",k:396,f:32,pr:24,price:280,benefit:"كالسيوم 900mg - عظام"},
+{code:"6224009210817",cat:"جبن معلب",name:"رودس شيدر 250جم",brand:"رودس",k:312,f:24,pr:15,price:68,benefit:"طبيعي 100%"},
+{code:"6224000200028",cat:"جبن معلب",name:"عبور لاند فيتا 250جم",brand:"عبور لاند",k:264,f:21,pr:14,price:35,benefit:"فيتا خفيفة"},
+{code:"6224000020107",cat:"ألبان",name:"جهينة لبن كامل 1لتر",brand:"جهينة",k:61,f:3.5,pr:3.2,price:42,benefit:"فيتامين D"},
+{code:"6224000020503",cat:"عصائر",name:"جهينة برتقال 1لتر",brand:"جهينة",k:45,f:0,pr:0.7,price:42,benefit:"فيتامين C"},
+{code:"6221001100099",cat:"مشروبات",name:"بيبسي 330مل",brand:"بيبسي مصر",k:42,f:0,pr:0,price:12,benefit:"سكر عالي"},
+{code:"EGY-DRINK-001",cat:"مشروبات",name:"سبيرو سباتس مصري 300مل",brand:"سبيرو",k:40,f:0,pr:0,price:10,benefit:"مصري 100% - بديل بيبسي"}
+];
+async function loadMore(){
+ try{
+  let r=await fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms=&tagtype_0=countries&tag_contains_0=contains&tag_0=egypt&tagtype_1=codes&tag_contains_1=contains&tag_1=622&json=true&page_size=150&page=1');
+  let j=await r.json();
+  let extra=j.products.filter(p=>p.code&&p.code.startsWith('622')).map(p=>({
+   code:p.code,cat:(p.categories||'بقالة').split(',')[0],name:p.product_name_ar||p.product_name||'منتج مصري',
+   brand:(p.brands||'مصري').split(',')[0],k:Math.round(p.nutriments?.['energy-kcal_100g']||0),f:+(p.nutriments?.fat_100g||0).toFixed(1),pr:+(p.nutriments?.proteins_100g||0).toFixed(1),price:0,benefit:'منتج مصري 622 مسجل عالمياً'
+  }));
+  DB=[...DB,...extra];
+  document.getElementById('count').innerText=`✅ تم تحميل ${DB.length} منتج مصري 622`;
+  render(DB);
+ }catch(e){document.getElementById('count').innerText=`عرض ${DB.length} منتج (افتح النت لتحميل 150)`; render(DB);}
+}
+function render(a){document.getElementById('list').innerHTML=a.map(p=>`<div class=card><span class=badge>${p.cat}</span> <span class=badge style="background:#22c55e;color:#000">${p.brand}</span> <span class=badge>${p.code}</span><h3 style="margin:4px 0;font-size:13px">${p.name} - <span class=price>${p.price||'?'}ج</span></h3><div style="font-size:12px">${p.k} سعرة | دهون ${p.f}g | بروتين ${p.pr}g</div><div style="font-size:11px;margin-top:4px">💡 ${p.benefit}</div></div>`).join('')}
+function filterCat(c){render(c=='الكل'?DB:DB.filter(x=>x.cat.includes(c)||c.includes(x.cat)))}
+function searchProd(q){render(DB.filter(x=>(x.name+x.brand+x.code).includes(q)))}
+render(DB); loadMore();
+</script></body></html>
